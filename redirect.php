@@ -54,3 +54,4 @@ function getIDFromShortenedURL ($string, $base = ALLOWED_CHARS)
 	}
 	return $out;
 }
+?>
