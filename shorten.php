@@ -24,13 +24,14 @@ if(!empty($url_to_shorten) && preg_match('|^https?://|', $url_to_shorten))
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url_to_shorten);
+		curl_setopt($ch, CURLOPT_NOBODY, TRUE);
 		curl_setopt($ch,  CURLOPT_RETURNTRANSFER, TRUE);
 		$response = curl_exec($ch);
-		curl_close($handle);
 		if(curl_getinfo($ch, CURLINFO_HTTP_CODE) == '404')
 		{
 			die('Not a valid URL');
 		}
+		curl_close($ch);
 	}
 	
 	// check if the URL has already been shortened
