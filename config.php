@@ -1,4 +1,4 @@
-
+<?PHP
 /*
  * First authored by Brian Cray
  * License: http://creativecommons.org/licenses/by/3.0/
@@ -36,3 +36,4 @@ define('CACHE', TRUE);
 
 // if so, where will the cache files be stored? (include trailing slash)
 define('CACHE_DIR', dirname(__FILE__) . '/cache/');
+?>
