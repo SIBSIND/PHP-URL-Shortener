@@ -35,31 +35,33 @@ if(!empty($url_to_shorten) && preg_match('|^https?://|', $url_to_shorten) && fil
 	}
 	
 	// check if the URL has already been shortened
-	$already_shortened = mysql_result(mysql_query('SELECT id FROM ' . DB_TABLE. ' WHERE long_url="' . mysql_real_escape_string($url_to_shorten) . '"'), 0, 0);
-	if(!empty($already_shortened))
-	{
+	$results = mysql_query('SELECT id FROM ' . DB_TABLE. ' WHERE long_url="' . mysql_real_escape_string($url_to_shorten) . '"'); 
+	if (mysql_num_rows($results) != 0) {
 		// URL has already been shortened
+		$already_shortened = mysql_result($results, 0, 0);
 		$shortened_url = getShortenedURLFromID($already_shortened);
 	}
 	else
 	{
 		// URL not in database, insert
+		// Generate a short URL
+		$short_url =  substr(base_convert(md5($url_to_shorten),16, 36),0,SHORT_LENGTH);
+		$long_url = mysql_real_escape_string($url_to_shorten);	
+		$remote_addr = mysql_real_escape_string($_SERVER['REMOTE_ADDR']);
 		mysql_query('LOCK TABLES ' . DB_TABLE . ' WRITE;');
-		mysql_query('INSERT INTO ' . DB_TABLE . ' (long_url, created, creator) VALUES ("' . mysql_real_escape_string($url_to_shorten) . '", "' . time() . '", "' . mysql_real_escape_string($_SERVER['REMOTE_ADDR']) . '")');
+		$result = mysql_query('INSERT INTO ' . DB_TABLE . ' (long_url, short_url, created, creator) VALUES ("' . $long_url . '", "' . $short_url .  '", "' . time() . '", "' . $remote_addr . '")');
+		if (!$result) {
+			die("Insert into DB failed");
+		}
 		$shortened_url = getShortenedURLFromID(mysql_insert_id());
 		mysql_query('UNLOCK TABLES');
 	}
 	echo BASE_HREF . $shortened_url;
 }
 
-function getShortenedURLFromID ($integer, $base = ALLOWED_CHARS)
+function getShortenedURLFromID ($integer)
 {
-	$length = strlen($base);
-	while($integer > $length - 1)
-	{
-		$out = $base[fmod($integer, $length)] . $out;
-		$integer = floor( $integer / $length );
-	}
-	return $base[$integer] . $out;
+	$shorturl = mysql_result(mysql_query('SELECT short_url FROM ' . DB_TABLE. ' WHERE id=' . mysql_real_escape_string($integer) ),0,0);
+	return $shorturl;
 }
 ?>

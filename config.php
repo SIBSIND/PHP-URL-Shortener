@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /*
  * First authored by Brian Cray
  * License: http://creativecommons.org/licenses/by/3.0/
@@ -19,6 +19,9 @@ mysql_select_db(DB_NAME);
 // base location of script (include trailing slash)
 define('BASE_HREF', 'http://' . $_SERVER['HTTP_HOST'] . '/');
 
+// how long do you want your URLs?
+define('SHORT_LENGTH', 5);
+
 // change to limit short url creation to a single IP
 define('LIMIT_TO_IP', $_SERVER['REMOTE_ADDR']);
 
@@ -27,9 +30,6 @@ define('TRACK', FALSE);
 
 // check if URL exists first
 define('CHECK_URL', FALSE);
-
-// change the shortened URL allowed characters
-define('ALLOWED_CHARS', '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 // do you want to cache?
 define('CACHE', TRUE);
